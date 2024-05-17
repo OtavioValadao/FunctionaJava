@@ -59,12 +59,10 @@ public class Main {
 
 
     }
+
+    public static void testingOrd(){
+
+
+    }
 }
 
-/*
-E	Elemento de uma coleção.
-K	Chave de um mapa
-V	Valor em um mapa
-T	Tipo genérico
-S, U	Tipos adicionais
- */
