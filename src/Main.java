@@ -3,7 +3,10 @@ import Mocks.Mock;
 import TypeClass.Eq.Eq;
 import TypeClass.Eq.EqInteger;
 import TypeClass.Eq.EqString;
+import TypeClass.Ord.Ord;
+import TypeClass.Ord.OrdInteger;
 import utils.ContraMap;
+import utils.FromCompare;
 import utils.Utils;
 
 import java.util.List;
@@ -11,58 +14,99 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        testingEq();
+        testingEq(false);
+
+        testingOrd(true);
 
     }
 
 
-    public static void testingEq() {
-        System.out.println("Inciando testes da Eq\n");
+    public static void testingEq(Boolean isToPLay) {
 
-        EqInteger eqInteger = new EqInteger();
-        EqString eqString = new EqString();
+        if (isToPLay) {
+            System.out.println("Starting testing of Eq\n");
 
-        Integer itemToVerifyInteger = 1;
-        String itemToVerifyString = "pineapple";
+            EqInteger eqInteger = new EqInteger();
+            EqString eqString = new EqString();
 
-        System.out.printf("Integer: the element %s is present in array ?\n" +
-                        Utils.hasElementInArray(eqInteger, itemToVerifyInteger, List.of(1, 2, 3)),
-                itemToVerifyInteger);
+            Integer itemToVerifyInteger = 1;
+            String itemToVerifyString = "pineapple";
 
-        System.out.println("\n*******************");
+            Boolean hasElementInArrayInteger = Utils.hasElementInArray(eqInteger, itemToVerifyInteger, List.of(1, 2, 3));
 
-        System.out.printf("String: the element %s is present in array ?\n" +
-                        Utils.hasElementInArray(
-                                eqString,
-                                itemToVerifyString,
-                                List.of("apple", "orange", "banana")
-                        ),
-                itemToVerifyString);
+            System.out.printf("Integer: the element %s is present in array ?\n" +
+                            hasElementInArrayInteger,
+                    itemToVerifyInteger);
 
-        System.out.println("\n*******************");
+            System.out.println("\n*******************");
 
-        Person person1 = Mock.personMock();
-        Person person2 = Mock.personMock();
+            Boolean hasElementInArrayString  = Utils.hasElementInArray(
+                    eqString,
+                    itemToVerifyString,
+                    List.of("apple", "orange", "banana")
+            );
+            System.out.printf("String: the element %s is present in array ?\n" +
+                            hasElementInArrayString,
+                    itemToVerifyString);
 
-        Eq<Person> personEqInt = ContraMap.contraMapEq((Person prs) -> prs.age).apply(eqInteger);
-        Eq<Person> personEqStr = ContraMap.contraMapEq((Person prs) -> prs.name).apply(eqString);
+            System.out.println("\n*******************");
 
-        System.out.printf("The person have the same age?\n"
-                + personEqInt.isEquals(person1, person2) +
-                "\nAge that was comparing %s and %s\n", person1.age, person2.age
-        );
+            Person person1 = Mock.personMock();
+            Person person2 = Mock.personMock();
 
-        System.out.printf("The person have the same name?\n"
-                + personEqStr.isEquals(person1, person2) +
-                "\nNames that was comparing %s and %s\n", person1.name, person2.name
-        );
+            System.out.println(person1);
+            System.out.println(person2);
 
+            Eq<Person> personEqInt = ContraMap.contraMapEq((Person prs) -> prs.age).apply(eqInteger);
+            Eq<Person> personEqStr = ContraMap.contraMapEq((Person prs) -> prs.name).apply(eqString);
+
+            System.out.printf("The person have the same age?\n"
+                    + personEqInt.isEquals(person1, person2) +
+                    "\nAge that was comparing %s and %s\n", person1.age, person2.age
+            );
+
+            System.out.printf("The person have the same name?\n"
+                    + personEqStr.isEquals(person1, person2) +
+                    "\nNames that was comparing %s and %s\n", person1.name, person2.name
+            );
+        }
 
     }
 
-    public static void testingOrd(){
+    public static void testingOrd(Boolean isToPlay) {
+
+        if (isToPlay){
+            System.out.println("Starting testing of Ord\n");
+
+            OrdInteger ordInteger = new OrdInteger();
+            Person person1 = Mock.personMock();
+            Person person2 = Mock.personMock();
+
+            System.out.println(person1);
+            System.out.println(person2);
+
+            Integer min = Utils.min(person1.age, person2.age, ordInteger);
+
+            System.out.printf(
+                    "\nWhich is the less age? %s ou %s\n" +
+                    min + "\n",
+                    person1.age, person2.age
+            );
+
+            Ord<Person> personOrd = FromCompare
+                    .fromCompareOrd(
+                            (Person p1, Person p2) -> ordInteger.ordCompare(p1.age, p2.age)
+                    );
+
+            System.out.println("***************");
+            System.out.println(
+                    "Person1 is LT or GT of Person2? " +
+                    personOrd.ordCompare(person1, person2) + "\n"
+            );
 
 
+
+        }
     }
 }
 
