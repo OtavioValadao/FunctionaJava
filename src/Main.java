@@ -93,7 +93,7 @@ public class Main {
                     person1.age, person2.age
             );
 
-            Ord<Person> personOrd = FromCompare
+            Ord<Person> fromCompareOrd = FromCompare
                     .fromCompareOrd(
                             (Person p1, Person p2) -> ordInteger.ordCompare(p1.age, p2.age)
                     );
@@ -101,7 +101,24 @@ public class Main {
             System.out.println("***************");
             System.out.println(
                     "Person1 is LT or GT of Person2? " +
-                    personOrd.ordCompare(person1, person2) + "\n"
+                    fromCompareOrd.ordCompare(person1, person2) + "\n"
+            );
+
+            System.out.println("***************");
+
+            Ord<Person> contraedMapOrd = ContraMap.contraMapOrd(
+                    (Person p1, Person p2) -> ordInteger.ordCompare(p1.age, p2.age)
+            );
+
+            System.out.println(
+                    "With person is LT by ContraMap\n" +
+                    Utils.min(person1, person2, contraedMapOrd)
+            );
+            System.out.println("--------------------");
+
+            System.out.println(
+                    "With person is GT by ContraMap\n" +
+                            Utils.max(person1, person2, contraedMapOrd)
             );
 
 

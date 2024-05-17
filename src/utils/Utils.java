@@ -17,4 +17,8 @@ public class Utils {
         return ord.ordCompare(a, b) == Ordering.LT ? a : b;
     }
 
+    public static <T> T max(T a, T b, Ord<T> ord){
+        return ord.ordCompare(a, b) == Ordering.GT ? a : b;
+    }
+
 }
