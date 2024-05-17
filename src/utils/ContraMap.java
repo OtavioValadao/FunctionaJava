@@ -3,6 +3,7 @@ package utils;
 import TypeClass.Eq.Eq;
 import TypeClass.Ord.Enum.Ordering;
 import TypeClass.Ord.Ord;
+import TypeClass.Ord.methods.OrdMethods;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -14,7 +15,7 @@ public class ContraMap {
     }
 
     public static <T> Ord<T> contraMapOrd(BiFunction<T, T, Ordering> func){
-        return new OrdClassMethods<>(func);
+        return new OrdMethods<>(func);
     }
 
 }

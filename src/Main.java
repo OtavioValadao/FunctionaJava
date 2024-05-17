@@ -5,6 +5,8 @@ import TypeClass.Eq.EqInteger;
 import TypeClass.Eq.EqString;
 import TypeClass.Ord.Ord;
 import TypeClass.Ord.OrdInteger;
+import TypeClass.Semigroup.Semigroup;
+import TypeClass.Semigroup.methods.MeetGroup;
 import utils.ContraMap;
 import utils.FromCompare;
 import utils.Utils;
@@ -16,7 +18,10 @@ public class Main {
 
         testingEq(false);
 
-        testingOrd(true);
+        testingOrd(false);
+
+        testingSemigroup(true);
+
 
     }
 
@@ -40,7 +45,7 @@ public class Main {
 
             System.out.println("\n*******************");
 
-            Boolean hasElementInArrayString  = Utils.hasElementInArray(
+            Boolean hasElementInArrayString = Utils.hasElementInArray(
                     eqString,
                     itemToVerifyString,
                     List.of("apple", "orange", "banana")
@@ -75,7 +80,7 @@ public class Main {
 
     public static void testingOrd(Boolean isToPlay) {
 
-        if (isToPlay){
+        if (isToPlay) {
             System.out.println("Starting testing of Ord\n");
 
             OrdInteger ordInteger = new OrdInteger();
@@ -89,7 +94,7 @@ public class Main {
 
             System.out.printf(
                     "\nWhich is the less age? %s ou %s\n" +
-                    min + "\n",
+                            min + "\n",
                     person1.age, person2.age
             );
 
@@ -101,7 +106,7 @@ public class Main {
             System.out.println("***************");
             System.out.println(
                     "Person1 is LT or GT of Person2? " +
-                    fromCompareOrd.ordCompare(person1, person2) + "\n"
+                            fromCompareOrd.ordCompare(person1, person2) + "\n"
             );
 
             System.out.println("***************");
@@ -112,7 +117,7 @@ public class Main {
 
             System.out.println(
                     "With person is LT by ContraMap\n" +
-                    Utils.min(person1, person2, contraedMapOrd)
+                            Utils.min(person1, person2, contraedMapOrd)
             );
             System.out.println("--------------------");
 
@@ -120,9 +125,28 @@ public class Main {
                     "With person is GT by ContraMap\n" +
                             Utils.max(person1, person2, contraedMapOrd)
             );
+        }
+    }
 
+    public static void testingSemigroup(Boolean isToPlay) {
+        if (isToPlay) {
 
+            System.out.println("Starting testing of Semigroup\n");
 
+            Person person1 = Mock.personMock();
+            Person person2 = Mock.personMock();
+
+            System.out.println(person1);
+            System.out.println(person2);
+
+            OrdInteger ordInteger = new OrdInteger();
+
+            Semigroup<Integer> meetSemigroup = MeetGroup.getMeetSemigroup(ordInteger);
+            Semigroup<Integer> joinSemigroup = MeetGroup.getJoinSemigroup(ordInteger);
+
+            System.out.println("Implement MIN by concat result: " + meetSemigroup.concat(person1.age, person2.age));
+            System.out.println("Implement MAX by concat result: " + joinSemigroup.concat(person1.age, person2.age));
+            System.out.println("********************************");
         }
     }
 }

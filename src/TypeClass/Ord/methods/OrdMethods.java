@@ -1,12 +1,11 @@
-package utils;
+package TypeClass.Ord.methods;
 
 import TypeClass.Ord.Enum.Ordering;
 import TypeClass.Ord.Ord;
-import TypeClass.Ord.OrdInteger;
 
 import java.util.function.BiFunction;
 
-public class OrdClassMethods<T> implements Ord<T> {
+public class OrdMethods<T> implements Ord<T> {
 
     BiFunction<T, T, Ordering> ord;
 
@@ -23,7 +22,7 @@ public class OrdClassMethods<T> implements Ord<T> {
         return ordCompare(x, y) == Ordering.EQ;
     }
 
-    public OrdClassMethods(BiFunction<T, T, Ordering> compare) {
+    public OrdMethods(BiFunction<T, T, Ordering> compare) {
         this.ord = compare;
         this.eq = (a, b) -> this.ord.apply(a, b) == Ordering.EQ;
     }
