@@ -1,37 +1,27 @@
 package Entities;
 
 
+import Entities.Enum.PersonJobEnum;
+
 public class Person {
 
     public String name;
 
     public Integer age;
 
-    public String getName() {
-        return name;
-    }
+    public PersonJobEnum job;
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Person( String name, Integer age) {
+    public Person( String name, Integer age, PersonJobEnum personJobEnum) {
         this.age = age;
         this.name = name;
+        this.job = personJobEnum;
     }
 
     @Override
     public String toString() {
         return "Person " +
                 "name='" + name + '\'' +
+                ", job='" + job + '\'' +
                 ", age=" + age;
     }
 }

@@ -1,5 +1,6 @@
 package Mocks;
 
+import Entities.Enum.PersonJobEnum;
 import Entities.Person;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Random;
 public class Mock {
 
     public static Person personMock(){
-        return new Person(getName(), new Random().nextInt(90) + 10);
+        return new Person(getName(), new Random().nextInt(90) + 10, getJob());
     }
 
 
@@ -23,5 +24,10 @@ public class Mock {
         names.add("Fernanda");
 
         return names.get(new Random().nextInt(names.size()));
+    }
+
+    private static PersonJobEnum getJob(){
+        PersonJobEnum[] values = PersonJobEnum.values();
+        return values[new Random().nextInt(values.length)];
     }
 }

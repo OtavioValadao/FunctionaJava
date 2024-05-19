@@ -6,12 +6,14 @@ import TypeClass.Eq.EqString;
 import TypeClass.Ord.Ord;
 import TypeClass.Ord.OrdInteger;
 import TypeClass.Semigroup.Semigroup;
+import TypeClass.Semigroup.SemigroupBoolean;
 import TypeClass.Semigroup.methods.MeetGroup;
 import utils.ContraMap;
 import utils.FromCompare;
 import utils.Utils;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Main {
     public static void main(String[] args) {
@@ -130,14 +132,16 @@ public class Main {
 
     public static void testingSemigroup(Boolean isToPlay) {
         if (isToPlay) {
-
-            System.out.println("Starting testing of Semigroup\n");
-
+            System.out.println("================================");
+            System.out.println("Starting testing of Semigroup");
+            System.out.println("================================");
+            System.out.println("Print persons");
             Person person1 = Mock.personMock();
             Person person2 = Mock.personMock();
 
             System.out.println(person1);
             System.out.println(person2);
+            System.out.println("================================");
 
             OrdInteger ordInteger = new OrdInteger();
 
@@ -147,7 +151,32 @@ public class Main {
             System.out.println("Implement MIN by concat result: " + meetSemigroup.concat(person1.age, person2.age));
             System.out.println("Implement MAX by concat result: " + joinSemigroup.concat(person1.age, person2.age));
             System.out.println("********************************");
+
+            Predicate<Person> isOlder = Utils.isOlder((Person p) -> p.age);
+            Predicate<Person> needHighEducation = Utils.needHighEducation((Person p) -> p.job.name());
+
+            System.out.printf("The %s is older? " + isOlder.test(person1) + "\n", person1.name);
+            System.out.printf("The %s is older? " + isOlder.test(person2) + "\n", person2.name);
+
+            System.out.printf("The %s need high education? " + needHighEducation.test(person1) + "\n", person1.name);
+            System.out.printf("The %s need high education? " + needHighEducation.test(person2) + "\n", person2.name);
+            System.out.println("**********************************");
+
+            SemigroupBoolean<Person> personSemigroupBoolean =
+                    Utils.combineBoth(Predicate::and);
+
+            Predicate<Person> concat = personSemigroupBoolean.concat(isOlder, needHighEducation);
+
+            System.out.printf("%s will be rewarded? " + concat.test(person1), person1.name);
+            System.out.println(" ");
+            System.out.printf("%s will be rewarded? " + concat.test(person2), person2.name);
+            System.out.println(" ");
+            System.out.println("**********************************");
+
+
+
         }
     }
+
 }
 
