@@ -3,13 +3,12 @@ import Mocks.Mock;
 import TypeClass.Eq.Eq;
 import TypeClass.Eq.EqInteger;
 import TypeClass.Eq.EqString;
+import TypeClass.Eq.methods.EqUtils;
 import TypeClass.Ord.Ord;
 import TypeClass.Ord.OrdInteger;
-import TypeClass.Semigroup.Semigroup;
-import TypeClass.Semigroup.SemigroupBoolean;
+import TypeClass.Ord.methods.OrdUtils;
+import TypeClass.Semigroup.*;
 import TypeClass.Semigroup.methods.MeetGroup;
-import utils.ContraMap;
-import utils.FromCompare;
 import utils.Utils;
 
 import java.util.List;
@@ -23,7 +22,6 @@ public class Main {
         testingOrd(false);
 
         testingSemigroup(true);
-
 
     }
 
@@ -39,21 +37,21 @@ public class Main {
             Integer itemToVerifyInteger = 1;
             String itemToVerifyString = "pineapple";
 
-            Boolean hasElementInArrayInteger = Utils.hasElementInArray(eqInteger, itemToVerifyInteger, List.of(1, 2, 3));
+            Predicate<Integer> hasElementInArrayInteger =
+                    Utils.hasElementInArray(eqInteger, List.of(1, 2, 3));
 
             System.out.printf("Integer: the element %s is present in array ?\n" +
-                            hasElementInArrayInteger,
+                            hasElementInArrayInteger.test(itemToVerifyInteger),
                     itemToVerifyInteger);
 
             System.out.println("\n*******************");
 
-            Boolean hasElementInArrayString = Utils.hasElementInArray(
+            Predicate<String> hasElementInArrayString = Utils.hasElementInArray(
                     eqString,
-                    itemToVerifyString,
                     List.of("apple", "orange", "banana")
             );
             System.out.printf("String: the element %s is present in array ?\n" +
-                            hasElementInArrayString,
+                            hasElementInArrayString.test(itemToVerifyString),
                     itemToVerifyString);
 
             System.out.println("\n*******************");
@@ -64,8 +62,8 @@ public class Main {
             System.out.println(person1);
             System.out.println(person2);
 
-            Eq<Person> personEqInt = ContraMap.contraMapEq((Person prs) -> prs.age).apply(eqInteger);
-            Eq<Person> personEqStr = ContraMap.contraMapEq((Person prs) -> prs.name).apply(eqString);
+            Eq<Person> personEqInt = EqUtils.contraMap((Person prs) -> prs.age).apply(eqInteger);
+            Eq<Person> personEqStr = EqUtils.contraMap((Person prs) -> prs.name).apply(eqString);
 
             System.out.printf("The person have the same age?\n"
                     + personEqInt.isEquals(person1, person2) +
@@ -100,7 +98,7 @@ public class Main {
                     person1.age, person2.age
             );
 
-            Ord<Person> fromCompareOrd = FromCompare
+            Ord<Person> fromCompareOrd = OrdUtils
                     .fromCompareOrd(
                             (Person p1, Person p2) -> ordInteger.ordCompare(p1.age, p2.age)
                     );
@@ -113,7 +111,7 @@ public class Main {
 
             System.out.println("***************");
 
-            Ord<Person> contraedMapOrd = ContraMap.contraMapOrd(
+            Ord<Person> contraedMapOrd = OrdUtils.contraMapOrd(
                     (Person p1, Person p2) -> ordInteger.ordCompare(p1.age, p2.age)
             );
 
@@ -173,7 +171,16 @@ public class Main {
             System.out.println(" ");
             System.out.println("**********************************");
 
+            SemigroupProduct semigroupProduct = new SemigroupProduct();
+            SemigroupSum semigroupSum = new SemigroupSum();
+            SemigroupString semigroupString = new SemigroupString();
 
+            Integer sum = Utils.fold(semigroupSum, 0, List.of(1,2,3,4));
+            Integer product = Utils.fold(semigroupProduct, 1, List.of(1,2,3,4));
+
+            System.out.println("Function fold with SUM result: " + sum);
+            System.out.println("Function fold with Product result: " + product);
+            System.out.println("*********************************************");
 
         }
     }

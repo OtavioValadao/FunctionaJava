@@ -15,8 +15,8 @@ import java.util.function.Predicate;
 
 public class Utils {
 
-    public static <T> Boolean hasElementInArray(Eq<T> eq, T itemToVerify, List<T> list) {
-        return list.stream().anyMatch(item -> eq.isEquals(item, itemToVerify));
+    public static <T> Predicate<T> hasElementInArray(Eq<T> eq, List<T> list) {
+        return (pred) -> list.stream().anyMatch(item -> eq.isEquals(item, pred));
     }
 
     public static <T> T min(T a, T b, Ord<T> ord) {
@@ -40,7 +40,11 @@ public class Utils {
 
     public static <T> SemigroupBoolean<T> combineBoth(
             BiFunction<Predicate<T>, Predicate<T>, Predicate<T>> compare) {
-        return  new SemigroupBoolean<>(compare);
+        return new SemigroupBoolean<>(compare);
+    }
+
+    public static <T> T fold(Semigroup<T> semigroup, T item, List<T> list) {
+        return list.stream().reduce(item, semigroup::concat);
     }
 
 }
