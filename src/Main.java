@@ -9,9 +9,10 @@ import TypeClass.Ord.OrdInteger;
 import TypeClass.Ord.methods.OrdUtils;
 import TypeClass.Semigroup.*;
 import TypeClass.Semigroup.methods.MeetGroup;
-import utils.Utils;
+import TypeClass.Semigroup.methods.SemigroupUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class Main {
@@ -38,7 +39,7 @@ public class Main {
             String itemToVerifyString = "pineapple";
 
             Predicate<Integer> hasElementInArrayInteger =
-                    Utils.hasElementInArray(eqInteger, List.of(1, 2, 3));
+                    EqUtils.hasElementInArray(eqInteger, List.of(1, 2, 3));
 
             System.out.printf("Integer: the element %s is present in array ?\n" +
                             hasElementInArrayInteger.test(itemToVerifyInteger),
@@ -46,7 +47,7 @@ public class Main {
 
             System.out.println("\n*******************");
 
-            Predicate<String> hasElementInArrayString = Utils.hasElementInArray(
+            Predicate<String> hasElementInArrayString = EqUtils.hasElementInArray(
                     eqString,
                     List.of("apple", "orange", "banana")
             );
@@ -74,6 +75,18 @@ public class Main {
                     + personEqStr.isEquals(person1, person2) +
                     "\nNames that was comparing %s and %s\n", person1.name, person2.name
             );
+
+            System.out.println("\n*******************");
+
+            //TODO: verifiar o que esta sendo feito de errado
+            System.out.println("getStructEq");
+            Eq<Integer> age = EqUtils.getStructEq(
+                    Map.of(
+                            "x", eqInteger,
+                            "y", eqInteger
+                    )
+            );
+            System.out.println(age.isEquals(person1.age, person2.age));
         }
 
     }
@@ -90,7 +103,7 @@ public class Main {
             System.out.println(person1);
             System.out.println(person2);
 
-            Integer min = Utils.min(person1.age, person2.age, ordInteger);
+            Integer min = OrdUtils.min(person1.age, person2.age, ordInteger);
 
             System.out.printf(
                     "\nWhich is the less age? %s ou %s\n" +
@@ -117,13 +130,13 @@ public class Main {
 
             System.out.println(
                     "With person is LT by ContraMap\n" +
-                            Utils.min(person1, person2, contraedMapOrd)
+                            OrdUtils.min(person1, person2, contraedMapOrd)
             );
             System.out.println("--------------------");
 
             System.out.println(
                     "With person is GT by ContraMap\n" +
-                            Utils.max(person1, person2, contraedMapOrd)
+                            OrdUtils.max(person1, person2, contraedMapOrd)
             );
         }
     }
@@ -150,8 +163,8 @@ public class Main {
             System.out.println("Implement MAX by concat result: " + joinSemigroup.concat(person1.age, person2.age));
             System.out.println("********************************");
 
-            Predicate<Person> isOlder = Utils.isOlder((Person p) -> p.age);
-            Predicate<Person> needHighEducation = Utils.needHighEducation((Person p) -> p.job.name());
+            Predicate<Person> isOlder = OrdUtils.isOlder((Person p) -> p.age);
+            Predicate<Person> needHighEducation = OrdUtils.needHighEducation((Person p) -> p.job.name());
 
             System.out.printf("The %s is older? " + isOlder.test(person1) + "\n", person1.name);
             System.out.printf("The %s is older? " + isOlder.test(person2) + "\n", person2.name);
@@ -161,7 +174,7 @@ public class Main {
             System.out.println("**********************************");
 
             SemigroupBoolean<Person> personSemigroupBoolean =
-                    Utils.combineBoth(Predicate::and);
+                    SemigroupUtils.combineBoth(Predicate::and);
 
             Predicate<Person> concat = personSemigroupBoolean.concat(isOlder, needHighEducation);
 
@@ -175,12 +188,24 @@ public class Main {
             SemigroupSum semigroupSum = new SemigroupSum();
             SemigroupString semigroupString = new SemigroupString();
 
-            Integer sum = Utils.fold(semigroupSum, 0, List.of(1,2,3,4));
-            Integer product = Utils.fold(semigroupProduct, 1, List.of(1,2,3,4));
+            Integer sum = SemigroupUtils.fold(semigroupSum, 0, List.of(1, 2, 3, 4));
+            Integer product = SemigroupUtils.fold(semigroupProduct, 1, List.of(1, 2, 3, 4));
 
             System.out.println("Function fold with SUM result: " + sum);
             System.out.println("Function fold with Product result: " + product);
             System.out.println("*********************************************");
+
+            var semiGroupMpa = SemigroupUtils.getStructSemigroup(
+                    Person.class,
+                    Map.of(
+                            "age", semigroupSum,
+                            "name", semigroupString
+                            //TODO: aprender monoid
+                    )
+            );
+
+            System.out.println(semiGroupMpa.concat(person1, person2));
+
 
         }
     }

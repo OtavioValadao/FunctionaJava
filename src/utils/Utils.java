@@ -1,50 +1,54 @@
 package utils;
 
-import Entities.Enum.PersonJobEnum;
-import TypeClass.Eq.Eq;
-import TypeClass.Ord.Enum.Ordering;
-import TypeClass.Ord.Ord;
-import TypeClass.Semigroup.Semigroup;
-import TypeClass.Semigroup.SemigroupBoolean;
-
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.Map;
 
 public class Utils {
 
-    public static <T> Predicate<T> hasElementInArray(Eq<T> eq, List<T> list) {
-        return (pred) -> list.stream().anyMatch(item -> eq.isEquals(item, pred));
+
+    public static Object getFieldValue(Object obj, String key) {
+        try {
+            Class<?> clazz = obj.getClass();
+            var field = clazz.getDeclaredField(key);
+            field.setAccessible(true);
+            return field.get(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public static <T> T min(T a, T b, Ord<T> ord) {
-        return ord.ordCompare(a, b) == Ordering.LT ? a : b;
+    /***
+     * Needs the empty constructor
+     */
+    public static <T> T createNewInstance(Class<T> clazz, Map<String, Object> propertyValues) {
+        try {
+            T instance = clazz.getDeclaredConstructor().newInstance();
+            for (Field field : getAllFields(clazz)) {
+                field.setAccessible(true);
+                Object value = propertyValues.get(field.getName());
+                if (value != null) {
+                    field.set(instance, value);
+                }
+            }
+            return instance;
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 
-    public static <T> T max(T a, T b, Ord<T> ord) {
-        return ord.ordCompare(a, b) == Ordering.GT ? a : b;
-    }
+    public static Field[] getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> currentClass = clazz;
 
-    public static <T> Predicate<T> isOlder(Function<T, Integer> func) {
-        return (old) -> func.apply(old) >= 60;
-    }
-
-    public static <T> Predicate<T> needHighEducation(Function<T, String> func) {
-        return (job) -> {
-            String jobEnum = func.apply(job);
-            return !Objects.equals(jobEnum, PersonJobEnum.DRIVER.name()) && !Objects.equals(jobEnum, PersonJobEnum.ATHLETE.name());
-        };
-    }
-
-    public static <T> SemigroupBoolean<T> combineBoth(
-            BiFunction<Predicate<T>, Predicate<T>, Predicate<T>> compare) {
-        return new SemigroupBoolean<>(compare);
-    }
-
-    public static <T> T fold(Semigroup<T> semigroup, T item, List<T> list) {
-        return list.stream().reduce(item, semigroup::concat);
+        while (currentClass != null) {
+            fields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
+            currentClass = currentClass.getSuperclass();
+        }
+        return fields.toArray(new Field[0]);
     }
 
 }
